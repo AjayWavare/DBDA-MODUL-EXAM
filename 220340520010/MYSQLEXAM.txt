@@ -1,0 +1,112 @@
+mysql CODE
+
+CREATE TABLE DEPT5 (
+    DEPTNO INT(2),
+    DNAME VARCHAR(15),
+    LOC VARCHAR(10)
+);
+insert into DEPT5 ( DEPTNO , DNAME ,    LOC ) values
+(10 , 'ACCOUNTING','NEW YORK'),
+(20 , 'RESEARCH' ,   'DALLAS'),
+(30,  'SALES' ,     'CHICAGO'),
+(40 , 'OPERATIONS',  'BOSTON');
+   
+select * from DEPT5;
+
+CREATE TABLE EMP5 
+(
+    EMPNO INT(4),
+    ENAME VARCHAR(10),
+    JOB VARCHAR(9),
+    HIREDATE DATE,
+    SAL FLOAT(7,2),
+    COMM FLOAT(7,2),
+    DEPTNO INT(2)
+);
+insert into emp5 (EMPNO, ENAME, JOB,  HIREDATE,   SAL,    COMM,	  DEPTNO)values
+(7839 ,'KING', 'MANAGER' ,'1991-11-17', 5000, NULL ,10),
+(7698 ,'BLAKE', 'CLERK', '1981-05-01' , 2850, NULL, 30),
+(7782, 'CLARK' ,'MANAGER' ,'1981-06-09' ,2450, NULL, 10),
+(7566, 'JONES', 'CLERK', '1981-04-02', 2975, NULL, 20),
+(7654 ,'MARTIN' ,'SALESMAN' ,'1981-09-28' ,1250 ,1400 ,30),
+(7499, 'ALLEN', 'SALESMAN', '1981-02-20', 1600, 300, 30);
+
+select * from emp5;
+-- ----------------------------------------------------------------------
+-- 3. Display all the employees where SAL between 2500 and 5000 (inclusive of both).
+select * from emp5 where sal between 2500 and 5000;
+-- ---------------------------------------------------------------------------
+-- 4. Display all the ENAMEs in descending order of ENAME.
+select ename from emp5 order by ename desc;
+-- ---------------------------------------------------------------------------
+-- 5. Display all the JOBs in lowercase.
+select lower(job) from emp5;
+-- -----------------------------------------------------------------------------
+-- 6. Display the ENAMEs and the lengths of the ENAMEs.
+select ename, length(ename) from emp5;
+-- -----------------------------------------------------------------------------
+-- 7. Display the DEPTNO and the count of employees who belong to that DEPTNO .
+ select deptno ,  count(*) from emp5 group by deptno;
+-- ------------------------------------------------------------------------------
+-- 8. Display the DNAMEs and the ENAMEs who belong to that DNAME.
+select dname,ename from dept5,emp5 where dept5.deptno = emp5.deptno;
+-- --------------------------------------------------------------
+-- Display the position at which the string ‘AR’ occurs in the ename.
+-- ------------------------------------------------------------------
+-- 10. Display the HRA for each employee given that HRA is 20% of SAL.
+select sal*0.2 'HRA'from emp5;
+-- ---------------------------------------------------------------------------
+-- section 2
+-- question 1
+create table tempp5(result varchar(10));
+drop procedure PROC1;
+delimiter //
+create procedure PROC1(string1 varchar(10),string2 varchar(10))
+begin
+declare x varchar(20);
+declare n int;
+select locate(string1,string2) into n;
+	if n>0 then
+insert into tempp5 values('exists');
+else 
+insert into tempp5 values('not exists');
+end if;
+end; //
+ delimiter ;
+ 
+ call PROC1('DAC','CDAC');-- EXISTS
+  call PROC1('CAD','CDAC');-- NOT EXISTS
+ select * from tempp5;
+ -- ------------------------------------------------------------------------------
+ drop function FUNC1;
+ delimiter //
+ create function FUNC1(side1 int,side2 int,side3 int)
+ returns boolean
+ deterministic
+ begin
+	if side1+side2>side3 and
+    side2+side3>side1 and
+    side1+side3>side2
+    then 
+       insert into tempp5 values ('TRUE');
+		return true;
+    else
+        insert into tempp5 values ('FLASE');
+    return false;
+    end if;
+ end; //
+ delimiter ;
+ 
+  drop PROCEDURE FUNC;
+ delimiter //
+ create procedure FUNC()
+ begin
+	declare x boolean;
+    set x= FUNC1(10,15,20);
+      -- set x= FUNC1(10,15,200);
+ end; //
+ delimiter ;
+ 
+ call FUNC();
+ truncate tempp5;
+ select * from tempp5;
